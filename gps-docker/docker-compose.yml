@@ -1,0 +1,70 @@
+services:
+
+  postgres:
+    image: postgis/postgis
+    container_name: gps-postgres
+    environment:
+      POSTGRES_DB: gps
+      POSTGRES_USER: gps
+      POSTGRES_PASSWORD: gpspass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gps"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: ../backend
+    container_name: gps-api
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://gps:gpspass@postgres:5432/gps
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/docs')"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+
+  route-init:
+    build: ../backend
+    container_name: gps-route-init
+    depends_on:
+      api:
+        condition: service_healthy
+    entrypoint: ["python", "-u", "init_routes.py", "http://api:8000"]
+    restart: "no"
+
+  simulator:
+    build: ../gps-simulator
+    container_name: gps-simulator
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      API_URL: http://api:8000/location/update
+    restart: unless-stopped
+
+  dashboard:
+    build: ../frontend
+    container_name: gps-dashboard
+    ports:
+      - "3000:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      REACT_APP_API_URL: http://localhost:8000
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
