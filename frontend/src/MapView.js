@@ -3,34 +3,44 @@ import { useEffect, useState } from "react"
 import axios from "axios"
 import RouteDisplay from "./RouteDisplay"
 import VehicleMarker from "./VehicleMarker"
+import VehiclePanel from "./VehiclePanel"
+import StatsPanel from "./StatsPanel"
+import RouteSelector from "./RouteSelector"
+import LUSAKA_ROUTES from "./routes"
 import "./MapView.css"
 
 function MapView() {
 
     const [vehicles, setVehicles] = useState([])
+    const [selectedRoute, setSelectedRoute] = useState("ALL")
 
     const API = "http://localhost:8000"
 
     useEffect(() => {
 
-        const fetchData = async () => {
+        const fetchVehicles = async () => {
             try {
                 const res = await axios.get(`${API}/vehicles/live`)
                 setVehicles(res.data)
             } catch (err) {
-                console.error("Vehicle fetch error:", err)
+                console.error(err)
             }
         }
 
-        fetchData()
+        fetchVehicles()
 
-        const interval = setInterval(fetchData, 5000)
+        const interval = setInterval(fetchVehicles, 5000)
 
         return () => clearInterval(interval)
 
     }, [])
 
+    const filteredVehicles = selectedRoute === "ALL"
+        ? vehicles
+        : vehicles.filter(v => v.route_id === selectedRoute)
+
     return (
+
         <div className="mapview-container">
 
             <MapContainer
@@ -41,34 +51,31 @@ function MapView() {
 
                 <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    attribution="© OpenStreetMap contributors"
                 />
 
                 <RouteDisplay />
 
-                {vehicles.map((v) => (
+                {filteredVehicles.map(v =>
                     <VehicleMarker
-                        key={v.id || v.vehicle_id}
+                        key={v.vehicle_id}
                         vehicle={v}
                     />
-                ))}
+                )}
 
             </MapContainer>
 
-            <div className="mapview-legend">
+            <RouteSelector
+                routes={LUSAKA_ROUTES}
+                selected={selectedRoute}
+                onChange={setSelectedRoute}
+            />
 
-                <strong>🚌 Active Vehicles: {vehicles.length}</strong>
+            <VehiclePanel vehicles={filteredVehicles} />
 
-                <hr />
-
-                <p>Colored dashed lines = Bus routes</p>
-                <p>● = Bus stops</p>
-
-            </div>
+            <StatsPanel vehicles={vehicles} routes={LUSAKA_ROUTES} />
 
         </div>
     )
-
 }
 
 export default MapView
