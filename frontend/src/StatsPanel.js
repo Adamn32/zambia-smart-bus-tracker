@@ -1,48 +1,57 @@
+import { findClosestRoute } from "./routes"
+
 function StatsPanel({ vehicles, routes }) {
 
-    const activeVehicles = vehicles.length
+  const activeVehicles = vehicles.length
 
-    const avgSpeed = vehicles.length
-        ? Math.round(
-            vehicles.reduce((a, b) => a + b.speed, 0) / vehicles.length
+  const avgSpeed =
+    vehicles.length > 0
+      ? Math.round(
+          vehicles.reduce((sum, v) => sum + v.speed, 0) / vehicles.length
         )
-        : 0
+      : 0
 
-    const routeStats = {}
+  const routeStats = {}
 
-    routes.forEach(r => {
-        routeStats[r.id] = vehicles.filter(v => v.route_id === r.id).length
-    })
+  routes.forEach(r => {
+    routeStats[r.id] = 0
+  })
 
-    return (
+  vehicles.forEach(v => {
 
-        <div className="stats-panel">
+    const route = findClosestRoute([v.latitude, v.longitude])
 
-            <h3>Fleet Statistics</h3>
+    if (route) {
+      routeStats[route.id] += 1
+    }
 
-            <div>Active Vehicles: {activeVehicles}</div>
+  })
 
-            <div>Average Speed: {avgSpeed} km/h</div>
+  return (
 
-            <h4>Route Utilization</h4>
+    <div className="stats-panel">
 
-            {routes.map(r => (
+      <h3>Fleet Statistics</h3>
 
-                <div key={r.id}>
+      <div>Active Vehicles: {activeVehicles}</div>
 
-                    <span style={{ color: r.color }}>■</span>
+      <div>Average Speed: {avgSpeed} km/h</div>
 
-                    {r.name}
+      <h4>Route Utilization</h4>
 
-                    : {routeStats[r.id] || 0}
+      {routes.map(r => (
 
-                </div>
+        <div key={r.id}>
 
-            ))}
+          <span style={{ color: r.color }}>■</span>{" "}
+          {r.name}: {routeStats[r.id]}
 
         </div>
 
-    )
+      ))}
+
+    </div>
+  )
 }
 
 export default StatsPanel
