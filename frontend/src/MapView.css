@@ -29,6 +29,23 @@ Notes:
     font-family: Arial, Helvetica, sans-serif;
 }
 
+.app-title {
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-weight: 700;
+    font-size: 14px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    max-width: min(90vw, 720px);
+}
+
+
 
 /* ================================
    Route Selector (top-left)
@@ -246,3 +263,14 @@ Notes:
     }
 
 }
+
+@media (max-width: 700px) {
+
+    .app-title {
+        font-size: 12px;
+        padding: 8px 12px;
+        top: 12px;
+    }
+
+}
+

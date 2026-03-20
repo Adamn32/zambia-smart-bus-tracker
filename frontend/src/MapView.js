@@ -153,6 +153,8 @@ function MapView() {
 
         <div className="mapview-container">
 
+            <div className="app-title">Real-Time Transit Fleet Monitoring (Simulator + API + Dashboard)</div>
+
             <MapContainer
                 center={[-15.4167, 28.2833]}
                 zoom={13}

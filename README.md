@@ -1,4 +1,4 @@
-# Zambia Smart Bus Tracker
+# Real-Time Transit Fleet Monitoring (Simulator + API + Dashboard)
 
 Containerized real-time GPS fleet tracking **simulation** for public transport minibuses in Lusaka.
 
