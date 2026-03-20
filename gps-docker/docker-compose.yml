@@ -15,7 +15,6 @@
 # Notes:
 #   Service names and ports here must stay aligned with app connection settings.
 # ----------------------------------------------------------------------------
-
 services:
 
   postgres:
@@ -51,6 +50,7 @@ services:
 
     environment:
       DATABASE_URL: postgresql://gps:gpspass@postgres:5432/gps
+      API_TOKEN: dev-token-change-me
 
     depends_on:
       postgres:
@@ -87,6 +87,7 @@ services:
 
     environment:
       API_URL: http://api:8000/location/update
+      API_TOKEN: dev-token-change-me
 
     restart: unless-stopped
 
@@ -103,6 +104,7 @@ services:
 
     environment:
       REACT_APP_API_URL: http://localhost:8000
+      REACT_APP_API_TOKEN: dev-token-change-me
 
     restart: unless-stopped
 

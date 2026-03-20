@@ -18,12 +18,15 @@ Notes:
 ----------------------------------------------------------------------------
 """
 
+import os
 import random
 import time
 
 import requests
 
-API = "http://api:8000/location/update"
+API = os.getenv("API_URL", "http://api:8000/location/update")
+API_TOKEN = os.getenv("API_TOKEN", "dev-token-change-me")
+HEADERS = {"Authorization": f"Bearer {API_TOKEN}"}
 
 # Aligned with frontend route waypoints in frontend/src/routes.js
 ROUTES = {
@@ -91,7 +94,7 @@ while True:
         }
 
         try:
-            requests.post(API, json=payload, timeout=3)
+            requests.post(API, json=payload, headers=HEADERS, timeout=3)
         except Exception as error:
             print("API error:", error)
 

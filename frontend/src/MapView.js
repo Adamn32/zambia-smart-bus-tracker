@@ -35,7 +35,8 @@ function MapView() {
     const [vehicles, setVehicles] = useState([])
     const [selectedRoute, setSelectedRoute] = useState("ALL")
 
-    const API = "http://localhost:8000"
+    const API = process.env.REACT_APP_API_URL || "http://localhost:8000"
+    const API_TOKEN = process.env.REACT_APP_API_TOKEN || "dev-token-change-me"
     const WS_API = API.startsWith("https")
         ? API.replace("https", "wss")
         : API.replace("http", "ws")
@@ -68,7 +69,11 @@ function MapView() {
 
         const fetchVehicles = async () => {
             try {
-                const res = await axios.get(`${API}/vehicles/live`)
+                const res = await axios.get(`${API}/vehicles/live`, {
+                    headers: {
+                        Authorization: `Bearer ${API_TOKEN}`,
+                    },
+                })
                 setVehicles(res.data)
             } catch (err) {
                 console.error(err)
@@ -76,7 +81,8 @@ function MapView() {
         }
 
         const connectSocket = () => {
-            websocket = new WebSocket(WS_API + "/ws/locations")
+            const socketUrl = `${WS_API}/ws/locations?token=${encodeURIComponent(API_TOKEN)}`
+            websocket = new WebSocket(socketUrl)
 
             websocket.onmessage = (event) => {
                 try {
@@ -126,7 +132,7 @@ function MapView() {
             }
         }
 
-    }, [API, WS_API])
+    }, [API, API_TOKEN, WS_API])
 
     const vehiclesWithRoute = useMemo(() => {
         return vehicles.map((v) => {

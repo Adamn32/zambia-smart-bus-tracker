@@ -22,6 +22,7 @@ Notes:
 from fastapi import APIRouter, Depends, HTTPException, Query, WebSocket, WebSocketDisconnect
 from sqlalchemy.orm import Session
 
+from .auth import require_api_token, require_ws_token
 from .database import SessionLocal
 from .schemas import (
     InactiveVehicle,
@@ -75,6 +76,12 @@ def get_db():
 @router.websocket("/ws/locations")
 async def vehicle_updates_socket(websocket: WebSocket):
 
+    try:
+        require_ws_token(websocket.query_params.get("token"))
+    except HTTPException:
+        await websocket.close(code=1008)
+        return
+
     await manager.connect(websocket)
 
     try:
@@ -88,7 +95,11 @@ async def vehicle_updates_socket(websocket: WebSocket):
 
 
 @router.post("/location/update", response_model=LocationUpdateResponse)
-async def update_location(data: LocationUpdate, db: Session = Depends(get_db)):
+async def update_location(
+    data: LocationUpdate,
+    db: Session = Depends(get_db),
+    _token: str = Depends(require_api_token),
+):
 
     vehicle_payload = tracking_service.create_location_update(
         db,
@@ -109,12 +120,19 @@ async def update_location(data: LocationUpdate, db: Session = Depends(get_db)):
 
 
 @router.get("/vehicles", response_model=list[VehicleLocation])
-def vehicles(db: Session = Depends(get_db)):
+def vehicles(
+    db: Session = Depends(get_db),
+    _token: str = Depends(require_api_token),
+):
     return tracking_service.get_latest_vehicle_positions(db)
 
 
 @router.get("/vehicles/{vehicle_id}/latest", response_model=VehicleLocation)
-def vehicle_latest(vehicle_id: str, db: Session = Depends(get_db)):
+def vehicle_latest(
+    vehicle_id: str,
+    db: Session = Depends(get_db),
+    _token: str = Depends(require_api_token),
+):
     vehicle = tracking_service.get_vehicle_latest_position(db, vehicle_id)
 
     if vehicle is None:
@@ -124,7 +142,10 @@ def vehicle_latest(vehicle_id: str, db: Session = Depends(get_db)):
 
 
 @router.get("/vehicles/live", response_model=list[VehicleLocation])
-def vehicles_live(db: Session = Depends(get_db)):
+def vehicles_live(
+    db: Session = Depends(get_db),
+    _token: str = Depends(require_api_token),
+):
     # Backward-compatible alias.
     return tracking_service.get_latest_vehicle_positions(db)
 
@@ -133,6 +154,7 @@ def vehicles_live(db: Session = Depends(get_db)):
 def vehicles_inactive(
     threshold_seconds: int = Query(default=120, ge=1),
     db: Session = Depends(get_db),
+    _token: str = Depends(require_api_token),
 ):
     vehicles_data = tracking_service.get_latest_vehicle_positions(db)
     return tracking_service.detect_inactive_vehicles(vehicles_data, threshold_seconds)
@@ -142,6 +164,7 @@ def vehicles_inactive(
 def route_aggregation(
     tolerance: float = Query(default=0.005, gt=0),
     db: Session = Depends(get_db),
+    _token: str = Depends(require_api_token),
 ):
     vehicles_data = tracking_service.get_latest_vehicle_positions(db)
     return tracking_service.aggregate_route_utilization(db, vehicles_data, tolerance)

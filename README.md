@@ -14,6 +14,14 @@ Core flow:
 
 `Simulator -> API -> DB -> Frontend`
 
+```mermaid
+flowchart LR
+    SIM[GPS Simulator] -->|POST /location/update| API[FastAPI]
+    API --> DB[(PostgreSQL + PostGIS)]
+    API -->|WS /ws/locations| UI[React Dashboard]
+    UI -->|GET /vehicles*| API
+```
+
 - `Simulator` (`gps-simulator`) generates mock GPS positions every 5 seconds
 - `API` (FastAPI) ingests telemetry, serves APIs, and streams updates via WebSockets
 - `DB` (PostgreSQL + PostGIS) persists location records
@@ -107,6 +115,13 @@ Current runtime defaults from `gps-docker/docker-compose.yml`:
 - Backend port: `8000`
 - Frontend port: `3000`
 - Backend DB URL (compose env): `postgresql://gps:gpspass@postgres:5432/gps`
+- API token (compose env): `API_TOKEN=dev-token-change-me`
+
+Authentication model:
+
+- HTTP endpoints require `Authorization: Bearer <token>`
+- WebSocket endpoint requires `token` query parameter
+- Frontend and simulator read token from environment (`REACT_APP_API_TOKEN` and `API_TOKEN`)
 
 Important behavior:
 
@@ -174,6 +189,7 @@ Verify health:
 ```bash
 docker compose ps
 curl -sS http://localhost:8000/docs > /dev/null && echo "API reachable"
+curl -sS -H "Authorization: Bearer dev-token-change-me" http://localhost:8000/vehicles > /dev/null && echo "Vehicles endpoint reachable"
 curl -sS -I http://localhost:3000
 ```
 
@@ -181,17 +197,18 @@ Verify simulation data flow:
 
 ```bash
 docker compose logs --tail=100 simulator
-curl -sS http://localhost:8000/vehicles/live
+curl -sS -H "Authorization: Bearer dev-token-change-me" http://localhost:8000/vehicles/live
 ```
 
 Smoke test ingest endpoint:
 
 ```bash
 curl -sS -X POST http://localhost:8000/location/update \
+  -H "Authorization: Bearer dev-token-change-me" \
   -H "Content-Type: application/json" \
   -d '{"vehicle_id":"LUS-MB-999","lat":-15.423221,"lon":28.280470,"speed":42}'
 
-curl -sS http://localhost:8000/vehicles/live
+curl -sS -H "Authorization: Bearer dev-token-change-me" http://localhost:8000/vehicles/live
 ```
 
 UI checks:
@@ -201,6 +218,18 @@ UI checks:
 - Fleet panel lists vehicles
 - Route filter changes visible vehicles
 - Stats panel updates vehicle counts and average speed
+
+## Redis Integration Plan (Optional)
+
+Current status: Redis is not yet required for local operation.
+
+Recommended phased integration:
+
+1. Add Redis service in compose and backend dependency (`redis` Python client).
+2. Publish vehicle updates to Redis Pub/Sub from `POST /location/update`.
+3. Subscribe in WebSocket broadcaster for multi-instance API scale-out.
+4. Cache latest vehicle snapshot in Redis for faster `GET /vehicles` reads.
+5. Keep PostgreSQL as source-of-truth persistence layer.
 
 ## Troubleshooting
 
