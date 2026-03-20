@@ -5,7 +5,16 @@ Module      : routes.js
 Author      : Adam ChapChap Ng'uni
 Date        : 2026-03-20
 Time        : 10:54:11 CAT
-Description : Static route definitions and helper utilities for route matching.
+Description :
+  Stores route definitions and helper utilities for route matching.
+
+  This file's role in the codebase:
+    - defines canonical route names, colors, and coordinates
+    - provides helper logic like closest-route detection
+    - is reused by map rendering and vehicle/statistics components
+
+Notes:
+  Update route metadata here first when adding new transit lines.
 ----------------------------------------------------------------------------
 */
 

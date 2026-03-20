@@ -5,7 +5,16 @@ Module      : main.py
 Author      : Adam ChapChap Ng'uni
 Date        : 2026-03-20
 Time        : 10:54:11 CAT
-Description : FastAPI application setup, startup checks, and router registration.
+Description :
+  Creates and configures the FastAPI application instance.
+
+  This file's role in the codebase:
+    - sets middleware and CORS policy for client access
+    - validates database readiness on startup before serving
+    - initializes tables and mounts router endpoints
+
+Notes:
+  Startup retry behavior here protects service boot in containerized runs.
 ----------------------------------------------------------------------------
 """
 

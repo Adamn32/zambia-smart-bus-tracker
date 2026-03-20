@@ -5,7 +5,16 @@ Module      : RouteSelector.js
 Author      : Adam ChapChap Ng'uni
 Date        : 2026-03-20
 Time        : 10:54:11 CAT
-Description : Route filter control for selecting visible transit lines.
+Description :
+  Renders the route filter control used by map views.
+
+  This file's role in the codebase:
+    - exposes route selection UI for narrowing active display
+    - sends selected value changes back to parent state
+    - supports focused monitoring of specific corridors
+
+Notes:
+  Keep this component controlled through props for predictable filtering.
 ----------------------------------------------------------------------------
 */
 

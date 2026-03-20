@@ -5,7 +5,16 @@ Module      : init_routes.py
 Author      : Adam ChapChap Ng'uni
 Date        : 2026-03-20
 Time        : 10:54:11 CAT
-Description : Route seeding utility that initializes transit routes through the API.
+Description :
+  Seeds baseline transit routes into the backend service.
+
+  This file's role in the codebase:
+    - sends predefined route payloads to API endpoints
+    - prepares route catalog needed for UI overlays and matching
+    - supports first-time environment bootstrap workflows
+
+Notes:
+  Execute after API startup so route creation requests can succeed.
 ----------------------------------------------------------------------------
 """
 

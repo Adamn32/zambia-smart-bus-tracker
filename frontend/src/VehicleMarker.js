@@ -5,7 +5,16 @@ Module      : VehicleMarker.js
 Author      : Adam ChapChap Ng'uni
 Date        : 2026-03-20
 Time        : 10:54:11 CAT
-Description : Map marker component showing live vehicle positions and details.
+Description :
+  Renders each vehicle marker with popup metadata on the map.
+
+  This file's role in the codebase:
+    - converts vehicle records into Leaflet marker instances
+    - attaches popups with speed, status, and route details
+    - applies route inference helpers for readable marker context
+
+Notes:
+  Marker icon and popup formatting changes should stay consistent with panel data.
 ----------------------------------------------------------------------------
 */
 

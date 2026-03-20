@@ -5,7 +5,16 @@ Module      : wait-for-db.py
 Author      : Adam ChapChap Ng'uni
 Date        : 2026-03-20
 Time        : 10:54:11 CAT
-Description : Database readiness probe used before backend service startup.
+Description :
+  Waits until PostgreSQL becomes reachable for dependent services.
+
+  This file's role in the codebase:
+    - performs connection retry loop during container startup
+    - prevents API initialization before DB availability
+    - reduces transient boot-time failures in compose flows
+
+Notes:
+  Retry interval tuning here impacts startup latency vs resilience.
 ----------------------------------------------------------------------------
 """
 

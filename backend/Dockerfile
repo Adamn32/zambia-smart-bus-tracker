@@ -4,7 +4,16 @@
 # Author      : Adam ChapChap Ng'uni
 # Date        : 2026-03-20
 # Time        : 10:54:11 CAT
-# Description : Container build instructions for the backend API service.
+# Description :
+#   Builds the backend API container image for runtime execution.
+#
+#   This file's role in the codebase:
+#     - installs Python dependencies required by FastAPI services
+#     - copies backend source and startup support scripts
+#     - defines the runtime image used by docker-compose stack
+#
+# Notes:
+#   Keep dependency and base image updates aligned with requirements.txt.
 # ----------------------------------------------------------------------------
 
 FROM python:3.11-slim

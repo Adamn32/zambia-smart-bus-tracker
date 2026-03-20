@@ -5,7 +5,16 @@ Module      : MapView.js
 Author      : Adam ChapChap Ng'uni
 Date        : 2026-03-20
 Time        : 10:54:11 CAT
-Description : Main map container coordinating data fetches and UI overlays.
+Description :
+  Implements the main map screen and data orchestration layer.
+
+  This file's role in the codebase:
+    - fetches and refreshes vehicles, routes, and summary data
+    - coordinates map layers, markers, filters, and side panels
+    - acts as the operational dashboard container for dispatch view
+
+Notes:
+  State changes here directly affect map rendering and panel updates.
 ----------------------------------------------------------------------------
 */
 

@@ -5,7 +5,16 @@ Module      : models.py
 Author      : Adam ChapChap Ng'uni
 Date        : 2026-03-20
 Time        : 10:54:11 CAT
-Description : SQLAlchemy ORM models for persisted GPS and route data.
+Description :
+  Declares ORM entities used by the backend persistence layer.
+
+  This file's role in the codebase:
+    - defines database table mappings for GPS/location records
+    - centralizes typed columns and default timestamp behavior
+    - provides schema contract for route and stats queries
+
+Notes:
+  Any schema change here should be coordinated with migration/update strategy.
 ----------------------------------------------------------------------------
 """
 

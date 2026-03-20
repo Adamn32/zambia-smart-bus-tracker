@@ -5,7 +5,16 @@ Module      : MapView.css
 Author      : Adam ChapChap Ng'uni
 Date        : 2026-03-20
 Time        : 10:54:11 CAT
-Description : Styling for map layout, overlays, and dashboard panels.
+Description :
+  Provides styling for the map page and floating UI panels.
+
+  This file's role in the codebase:
+    - defines responsive layout for map and overlay components
+    - styles route/vehicle/statistics panel blocks consistently
+    - keeps the visual hierarchy readable for live operations
+
+Notes:
+  Prefer editing shared classes here instead of inline styles in components.
 ----------------------------------------------------------------------------
 */
 

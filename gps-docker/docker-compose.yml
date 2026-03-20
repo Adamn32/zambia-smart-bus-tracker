@@ -4,7 +4,16 @@
 # Author      : Adam ChapChap Ng'uni
 # Date        : 2026-03-20
 # Time        : 10:54:11 CAT
-# Description : Service orchestration for database, API, frontend, and simulator containers.
+# Description :
+#   Defines the full local multi-service environment topology.
+#
+#   This file's role in the codebase:
+#     - wires PostgreSQL/PostGIS, backend, frontend, and simulator services
+#     - configures networking, volumes, ports, and startup ordering
+#     - provides the main orchestration entry point for local deployment
+#
+# Notes:
+#   Service names and ports here must stay aligned with app connection settings.
 # ----------------------------------------------------------------------------
 
 services:

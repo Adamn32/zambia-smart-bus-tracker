@@ -5,7 +5,16 @@ Module      : RouteDisplay.js
 Author      : Adam ChapChap Ng'uni
 Date        : 2026-03-20
 Time        : 10:54:11 CAT
-Description : Renders Lusaka route lines and related map markers.
+Description :
+  Draws static route geometry and route points on the Leaflet map.
+
+  This file's role in the codebase:
+    - renders route polylines from configured Lusaka routes
+    - visualizes corridor paths used for vehicle context
+    - gives operators a baseline network view under live markers
+
+Notes:
+  Route geometry source is maintained in routes.js.
 ----------------------------------------------------------------------------
 */
 

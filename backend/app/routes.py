@@ -5,7 +5,16 @@ Module      : routes.py
 Author      : Adam ChapChap Ng'uni
 Date        : 2026-03-20
 Time        : 10:54:11 CAT
-Description : API endpoints for vehicle locations, routes, and fleet statistics.
+Description :
+  Implements API endpoints for location and fleet operations.
+
+  This file's role in the codebase:
+    - receives GPS updates from simulator or external producers
+    - serves recent vehicle positions and route-related data
+    - computes summary metrics consumed by dashboard panels
+
+Notes:
+  Keep response shapes stable because frontend components depend on them.
 ----------------------------------------------------------------------------
 """
 

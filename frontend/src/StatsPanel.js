@@ -5,7 +5,16 @@ Module      : StatsPanel.js
 Author      : Adam ChapChap Ng'uni
 Date        : 2026-03-20
 Time        : 10:54:11 CAT
-Description : Displays fleet-level statistics derived from active vehicles.
+Description :
+  Computes and displays aggregate fleet performance indicators.
+
+  This file's role in the codebase:
+    - derives totals and averages from live vehicle feed
+    - summarizes route and activity insights for quick scanning
+    - complements map visuals with numerical operational context
+
+Notes:
+  Guard calculations for empty datasets to avoid NaN outputs.
 ----------------------------------------------------------------------------
 */
 

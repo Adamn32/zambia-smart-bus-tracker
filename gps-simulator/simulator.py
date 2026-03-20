@@ -5,7 +5,16 @@ Module      : simulator.py
 Author      : Adam ChapChap Ng'uni
 Date        : 2026-03-20
 Time        : 10:54:11 CAT
-Description : GPS simulator that posts mock vehicle positions to backend endpoints.
+Description :
+  Generates and sends mock GPS telemetry for simulated buses.
+
+  This file's role in the codebase:
+    - iterates route coordinates to emulate moving vehicles
+    - posts periodic location/speed/status updates to backend API
+    - provides realistic data feed for local testing and demos
+
+Notes:
+  API endpoint and timing values control simulation realism and load.
 ----------------------------------------------------------------------------
 """
 

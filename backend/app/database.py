@@ -5,7 +5,16 @@ Module      : database.py
 Author      : Adam ChapChap Ng'uni
 Date        : 2026-03-20
 Time        : 10:54:11 CAT
-Description : Database engine, session factory, and declarative base configuration.
+Description :
+  Configures SQLAlchemy engine, sessions, and base metadata.
+
+  This file's role in the codebase:
+    - creates the PostgreSQL connection engine with health checks
+    - exposes SessionLocal for request-scoped DB usage
+    - exports declarative Base shared by ORM models
+
+Notes:
+  Connection URL and pooling behavior here affect all backend DB access.
 ----------------------------------------------------------------------------
 """
 
