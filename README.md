@@ -153,7 +153,9 @@ Keep frontend and simulator routes aligned when editing waypoints.
 Implemented endpoints:
 
 - `POST /location/update`
-- `GET /vehicles/live`
+- `GET /vehicles`
+- `GET /vehicles/{vehicle_id}/latest`
+- `GET /vehicles/live` (backward-compatible alias)
 - `GET /vehicles/inactive`
 - `GET /vehicles/route-aggregation`
 - `WS /ws/locations` (streaming vehicle updates)

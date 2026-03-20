@@ -37,12 +37,18 @@ def _serialize_vehicle(gps: GPSLocation) -> dict:
     }
 
 
-def create_location_update(db, data: dict) -> dict:
+def create_location_update(
+    db,
+    vehicle_id: str,
+    latitude: float,
+    longitude: float,
+    speed: float,
+) -> dict:
     gps = GPSLocation(
-        vehicle_id=data["vehicle_id"],
-        latitude=data["lat"],
-        longitude=data["lon"],
-        speed=data["speed"],
+        vehicle_id=vehicle_id,
+        latitude=latitude,
+        longitude=longitude,
+        speed=speed,
     )
 
     db.add(gps)
@@ -79,6 +85,20 @@ def get_latest_vehicle_positions(db) -> list[dict]:
     )
 
     return [_serialize_vehicle(r) for r in results]
+
+
+def get_vehicle_latest_position(db, vehicle_id: str) -> dict | None:
+    latest = (
+        db.query(GPSLocation)
+        .filter(GPSLocation.vehicle_id == vehicle_id)
+        .order_by(GPSLocation.timestamp.desc())
+        .first()
+    )
+
+    if latest is None:
+        return None
+
+    return _serialize_vehicle(latest)
 
 
 def _to_utc(ts: datetime) -> datetime:
