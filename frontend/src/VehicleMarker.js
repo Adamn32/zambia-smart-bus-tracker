@@ -24,7 +24,7 @@ import L from "leaflet";
 import { findClosestRoute } from "./routes";
 
 function VehicleMarker({ vehicle }) {
-    const route = findClosestRoute([vehicle.latitude, vehicle.longitude]);
+    const route = vehicle.matchedRoute || findClosestRoute([vehicle.latitude, vehicle.longitude]);
 
     const busIcon = L.divIcon({
         html: `

@@ -18,6 +18,8 @@ Notes:
 ----------------------------------------------------------------------------
 */
 
+import { findClosestRoute } from "./routes"
+
 function VehiclePanel({ vehicles }) {
 
     return (
@@ -28,22 +30,28 @@ function VehiclePanel({ vehicles }) {
 
             {vehicles.length === 0 && <p>No active vehicles</p>}
 
-            {vehicles.map(v => (
+            {vehicles.map(v => {
+                const route = v.matchedRoute || findClosestRoute([v.latitude, v.longitude])
 
-                <div key={v.vehicle_id} className="vehicle-row">
+                return (
+                    <div key={v.vehicle_id} className="vehicle-row">
 
-                    <strong>{v.vehicle_id}</strong>
+                        <strong>{v.vehicle_id}</strong>
 
-                    <div>Speed: {v.speed} km/h</div>
+                        <div>Speed: {v.speed} km/h</div>
 
-                    <div>
-                        {v.latitude.toFixed(4)},
-                        {v.longitude.toFixed(4)}
+                        <div>
+                            {v.latitude.toFixed(4)},
+                            {v.longitude.toFixed(4)}
+                        </div>
+
+                        <div>
+                            Route: {route ? route.name : "Unassigned"}
+                        </div>
+
                     </div>
-
-                </div>
-
-            ))}
+                )
+            })}
 
         </div>
 

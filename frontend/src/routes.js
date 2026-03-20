@@ -22,7 +22,7 @@ const LUSAKA_ROUTES = [
 
     {
         id: "1",
-        name: "Kulima Tower → Kabulonga",
+        name: "Kulima Tower -> Kabulonga",
         color: "#FF5733",
         waypoints: [
             [-15.423221, 28.280470],
@@ -42,7 +42,7 @@ const LUSAKA_ROUTES = [
 
     {
         id: "2",
-        name: "Kulima Tower → Bauleni",
+        name: "Kulima Tower -> Bauleni",
         color: "#33FF57",
         waypoints: [
             [-15.423221, 28.280470],
@@ -64,7 +64,7 @@ const LUSAKA_ROUTES = [
 
     {
         id: "3",
-        name: "Kulima Tower → Kamwala South",
+        name: "Kulima Tower -> Kamwala South",
         color: "#3357FF",
         waypoints: [
             [-15.423221, 28.280470],
@@ -87,6 +87,32 @@ const LUSAKA_ROUTES = [
 
 export default LUSAKA_ROUTES
 
+function squaredDistance(a, b) {
+    const dx = a[0] - b[0]
+    const dy = a[1] - b[1]
+    return dx * dx + dy * dy
+}
+
+function distancePointToSegment(p, a, b) {
+    const abx = b[0] - a[0]
+    const aby = b[1] - a[1]
+    const ab2 = abx * abx + aby * aby
+
+    if (ab2 === 0) {
+        return Math.sqrt(squaredDistance(p, a))
+    }
+
+    const apx = p[0] - a[0]
+    const apy = p[1] - a[1]
+    const t = Math.max(0, Math.min(1, (apx * abx + apy * aby) / ab2))
+
+    const projection = [
+        a[0] + t * abx,
+        a[1] + t * aby
+    ]
+
+    return Math.sqrt(squaredDistance(p, projection))
+}
 
 export function findClosestRoute(vehicleLocation) {
 
@@ -96,23 +122,32 @@ export function findClosestRoute(vehicleLocation) {
     let minDistance = Infinity
 
     LUSAKA_ROUTES.forEach(route => {
+        const points = route.waypoints
 
-        route.waypoints.forEach(point => {
+        if (!points || points.length === 0) {
+            return
+        }
 
-            const dLat = Math.abs(point[0] - vehicleLocation[0])
-            const dLon = Math.abs(point[1] - vehicleLocation[1])
-
-            const distance = Math.sqrt(dLat * dLat + dLon * dLon)
-
-            if (distance < minDistance) {
-                minDistance = distance
+        if (points.length === 1) {
+            const pointDistance = Math.sqrt(squaredDistance(vehicleLocation, points[0]))
+            if (pointDistance < minDistance) {
+                minDistance = pointDistance
                 closestRoute = route
             }
+            return
+        }
 
-        })
+        for (let i = 0; i < points.length - 1; i += 1) {
+            const segmentDistance = distancePointToSegment(vehicleLocation, points[i], points[i + 1])
 
+            if (segmentDistance < minDistance) {
+                minDistance = segmentDistance
+                closestRoute = route
+            }
+        }
     })
 
-    return minDistance < 0.05 ? closestRoute : null
+    // ~550m tolerance in Lusaka latitude band.
+    return minDistance < 0.005 ? closestRoute : null
 
 }

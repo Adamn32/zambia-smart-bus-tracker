@@ -38,13 +38,11 @@ function StatsPanel({ vehicles, routes }) {
   })
 
   vehicles.forEach(v => {
-
-    const route = findClosestRoute([v.latitude, v.longitude])
+    const route = v.matchedRoute || findClosestRoute([v.latitude, v.longitude])
 
     if (route) {
       routeStats[route.id] += 1
     }
-
   })
 
   return (

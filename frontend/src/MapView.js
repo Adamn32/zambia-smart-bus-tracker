@@ -19,14 +19,14 @@ Notes:
 */
 
 import { MapContainer, TileLayer } from "react-leaflet"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import axios from "axios"
 import RouteDisplay from "./RouteDisplay"
 import VehicleMarker from "./VehicleMarker"
 import VehiclePanel from "./VehiclePanel"
 import StatsPanel from "./StatsPanel"
 import RouteSelector from "./RouteSelector"
-import LUSAKA_ROUTES from "./routes"
+import LUSAKA_ROUTES, { findClosestRoute } from "./routes"
 import "./MapView.css"
 
 function MapView() {
@@ -55,9 +55,20 @@ function MapView() {
 
     }, [])
 
+    const vehiclesWithRoute = useMemo(() => {
+        return vehicles.map((v) => {
+            const matchedRoute = findClosestRoute([v.latitude, v.longitude])
+            return {
+                ...v,
+                matchedRoute,
+                matchedRouteId: matchedRoute ? matchedRoute.id : null
+            }
+        })
+    }, [vehicles])
+
     const filteredVehicles = selectedRoute === "ALL"
-        ? vehicles
-        : vehicles.filter(v => v.route_id === selectedRoute)
+        ? vehiclesWithRoute
+        : vehiclesWithRoute.filter((v) => v.matchedRouteId === selectedRoute)
 
     return (
 
@@ -92,7 +103,7 @@ function MapView() {
 
             <VehiclePanel vehicles={filteredVehicles} />
 
-            <StatsPanel vehicles={vehicles} routes={LUSAKA_ROUTES} />
+            <StatsPanel vehicles={vehiclesWithRoute} routes={LUSAKA_ROUTES} />
 
         </div>
     )
