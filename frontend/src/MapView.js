@@ -6,11 +6,12 @@ Author      : Adam ChapChap Ng'uni
 Date        : 2026-03-20
 Time        : 10:54:11 CAT
 Description :
-  Implements the main map screen and data orchestration layer.
+  Implements the main real-time map screen and data orchestration layer.
 
   This file's role in the codebase:
-    - fetches and refreshes vehicles, routes, and summary data
-    - coordinates map layers, markers, filters, and side panels
+    - combines WebSocket streaming with REST fallback polling
+    - coordinates map layers, markers, route filters, and side panels
+    - keeps fleet and statistics panels aligned in a shared left column
     - acts as the operational dashboard container for dispatch view
 
 Notes:

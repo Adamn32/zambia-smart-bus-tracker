@@ -6,10 +6,11 @@ Author      : Adam ChapChap Ng'uni
 Date        : 2026-03-20
 Time        : 10:54:11 CAT
 Description :
-  Displays a textual list of active vehicles and states.
+  Displays a sorted textual list of active vehicles and states.
 
   This file's role in the codebase:
     - mirrors live vehicle feed in a compact operator panel
+    - enforces numeric ordering of vehicle IDs for stable scanning
     - surfaces route assignment, speed, and activity status
     - provides quick non-map visibility for fleet monitoring
 

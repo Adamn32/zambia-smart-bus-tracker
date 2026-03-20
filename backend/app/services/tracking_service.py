@@ -1,5 +1,22 @@
 """
-Business logic for fleet tracking, activity state, and route aggregation.
+----------------------------------------------------------------------------
+Project     : Zambia Smart Bus Tracker
+Module      : tracking_service.py
+Author      : Adam ChapChap Ng'uni
+Date        : 2026-03-20
+Time        : 10:54:11 CAT
+Description :
+  Centralizes backend business logic for tracking and analytics workflows.
+
+  This file's role in the codebase:
+    - creates and serializes location updates written to the database
+    - computes latest position per vehicle for read APIs
+    - detects inactive vehicles using time-threshold rules
+    - aggregates vehicle utilization across active routes
+
+Notes:
+  Keep pure business/domain logic here and keep route handlers thin.
+----------------------------------------------------------------------------
 """
 
 from datetime import datetime, timezone
