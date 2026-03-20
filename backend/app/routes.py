@@ -63,6 +63,7 @@ class ConnectionManager:
 
 
 manager = ConnectionManager()
+vehicle_direction_state: dict[str, str] = {}
 
 
 def get_db():
@@ -71,6 +72,18 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+def with_direction(vehicle: dict) -> dict:
+    direction = vehicle_direction_state.get(vehicle["vehicle_id"])
+    return {
+        **vehicle,
+        "direction": direction,
+    }
+
+
+def with_direction_list(vehicles: list[dict]) -> list[dict]:
+    return [with_direction(vehicle) for vehicle in vehicles]
 
 
 @router.websocket("/ws/locations")
@@ -101,12 +114,16 @@ async def update_location(
     _token: str = Depends(require_api_token),
 ):
 
+    if data.direction:
+        vehicle_direction_state[data.vehicle_id] = data.direction
+
     vehicle_payload = tracking_service.create_location_update(
         db,
         vehicle_id=data.vehicle_id,
         latitude=data.lat,
         longitude=data.lon,
         speed=data.speed,
+        direction=data.direction,
     )
 
     await manager.broadcast(
@@ -124,7 +141,7 @@ def vehicles(
     db: Session = Depends(get_db),
     _token: str = Depends(require_api_token),
 ):
-    return tracking_service.get_latest_vehicle_positions(db)
+    return with_direction_list(tracking_service.get_latest_vehicle_positions(db))
 
 
 @router.get("/vehicles/{vehicle_id}/latest", response_model=VehicleLocation)
@@ -138,7 +155,7 @@ def vehicle_latest(
     if vehicle is None:
         raise HTTPException(status_code=404, detail="Vehicle not found")
 
-    return vehicle
+    return with_direction(vehicle)
 
 
 @router.get("/vehicles/live", response_model=list[VehicleLocation])
@@ -147,7 +164,7 @@ def vehicles_live(
     _token: str = Depends(require_api_token),
 ):
     # Backward-compatible alias.
-    return tracking_service.get_latest_vehicle_positions(db)
+    return with_direction_list(tracking_service.get_latest_vehicle_positions(db))
 
 
 @router.get("/vehicles/inactive", response_model=list[InactiveVehicle])
@@ -156,7 +173,7 @@ def vehicles_inactive(
     db: Session = Depends(get_db),
     _token: str = Depends(require_api_token),
 ):
-    vehicles_data = tracking_service.get_latest_vehicle_positions(db)
+    vehicles_data = with_direction_list(tracking_service.get_latest_vehicle_positions(db))
     return tracking_service.detect_inactive_vehicles(vehicles_data, threshold_seconds)
 
 
@@ -166,5 +183,5 @@ def route_aggregation(
     db: Session = Depends(get_db),
     _token: str = Depends(require_api_token),
 ):
-    vehicles_data = tracking_service.get_latest_vehicle_positions(db)
+    vehicles_data = with_direction_list(tracking_service.get_latest_vehicle_positions(db))
     return tracking_service.aggregate_route_utilization(db, vehicles_data, tolerance)

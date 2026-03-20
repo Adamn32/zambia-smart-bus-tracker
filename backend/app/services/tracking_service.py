@@ -43,6 +43,7 @@ def create_location_update(
     latitude: float,
     longitude: float,
     speed: float,
+    direction: str | None = None,
 ) -> dict:
     gps = GPSLocation(
         vehicle_id=vehicle_id,
@@ -61,6 +62,7 @@ def create_location_update(
         "longitude": gps.longitude,
         "speed": gps.speed,
         "timestamp": gps.timestamp.isoformat() if gps.timestamp else None,
+        "direction": direction,
     }
 
 

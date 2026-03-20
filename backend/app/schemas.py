@@ -19,6 +19,7 @@ Notes:
 """
 
 from datetime import datetime
+from typing import Literal
 
 from pydantic import BaseModel, Field
 
@@ -28,6 +29,7 @@ class LocationUpdate(BaseModel):
     lat: float
     lon: float
     speed: float = Field(ge=0)
+    direction: Literal["outbound", "inbound"] | None = None
 
 
 class LocationUpdateResponse(BaseModel):
@@ -40,6 +42,7 @@ class VehicleLocation(BaseModel):
     longitude: float
     speed: float
     timestamp: datetime | None
+    direction: Literal["outbound", "inbound"] | None = None
 
 
 class InactiveVehicle(VehicleLocation):

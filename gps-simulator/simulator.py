@@ -77,20 +77,32 @@ ROUTES = {
     ],
 }
 
-vehicle_positions = {vehicle_id: 0 for vehicle_id in ROUTES}
+vehicle_state = {
+    vehicle_id: {
+        "index": 0,
+        "step": 1,
+    }
+    for vehicle_id in ROUTES
+}
 
 while True:
 
     for vehicle_id, route_points in ROUTES.items():
 
-        index = vehicle_positions[vehicle_id]
+        state = vehicle_state[vehicle_id]
+        index = state["index"]
+        step = state["step"]
+
         lat, lon = route_points[index]
+
+        direction = "outbound" if step > 0 else "inbound"
 
         payload = {
             "vehicle_id": vehicle_id,
             "lat": lat,
             "lon": lon,
             "speed": random.randint(30, 60),
+            "direction": direction,
         }
 
         try:
@@ -98,6 +110,16 @@ while True:
         except Exception as error:
             print("API error:", error)
 
-        vehicle_positions[vehicle_id] = (index + 1) % len(route_points)
+        next_index = index + step
+
+        if next_index >= len(route_points):
+            step = -1
+            next_index = len(route_points) - 2
+        elif next_index < 0:
+            step = 1
+            next_index = 1
+
+        state["index"] = next_index
+        state["step"] = step
 
     time.sleep(5)
