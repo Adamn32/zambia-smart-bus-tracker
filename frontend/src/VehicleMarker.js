@@ -1,3 +1,14 @@
+/*
+----------------------------------------------------------------------------
+Project     : Zambia Smart Bus Tracker
+Module      : VehicleMarker.js
+Author      : Adam ChapChap Ng'uni
+Date        : 2026-03-20
+Time        : 10:54:11 CAT
+Description : Map marker component showing live vehicle positions and details.
+----------------------------------------------------------------------------
+*/
+
 import React from "react";
 import { Marker, Popup } from "react-leaflet";
 import L from "leaflet";

@@ -1,3 +1,14 @@
+/*
+----------------------------------------------------------------------------
+Project     : Zambia Smart Bus Tracker
+Module      : RouteDisplay.js
+Author      : Adam ChapChap Ng'uni
+Date        : 2026-03-20
+Time        : 10:54:11 CAT
+Description : Renders Lusaka route lines and related map markers.
+----------------------------------------------------------------------------
+*/
+
 import React from "react";
 import { Polyline, CircleMarker, Popup } from "react-leaflet";
 import LUSAKA_ROUTES from "./routes";

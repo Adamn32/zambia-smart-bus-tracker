@@ -1,3 +1,14 @@
+"""
+----------------------------------------------------------------------------
+Project     : Zambia Smart Bus Tracker
+Module      : init_routes.py
+Author      : Adam ChapChap Ng'uni
+Date        : 2026-03-20
+Time        : 10:54:11 CAT
+Description : Route seeding utility that initializes transit routes through the API.
+----------------------------------------------------------------------------
+"""
+
 import requests
 import sys
 

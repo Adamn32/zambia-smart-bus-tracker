@@ -1,3 +1,14 @@
+"""
+----------------------------------------------------------------------------
+Project     : Zambia Smart Bus Tracker
+Module      : database.py
+Author      : Adam ChapChap Ng'uni
+Date        : 2026-03-20
+Time        : 10:54:11 CAT
+Description : Database engine, session factory, and declarative base configuration.
+----------------------------------------------------------------------------
+"""
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 

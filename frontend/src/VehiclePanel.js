@@ -1,3 +1,14 @@
+/*
+----------------------------------------------------------------------------
+Project     : Zambia Smart Bus Tracker
+Module      : VehiclePanel.js
+Author      : Adam ChapChap Ng'uni
+Date        : 2026-03-20
+Time        : 10:54:11 CAT
+Description : Panel listing live vehicles and their route assignments.
+----------------------------------------------------------------------------
+*/
+
 function VehiclePanel({ vehicles }) {
 
     return (

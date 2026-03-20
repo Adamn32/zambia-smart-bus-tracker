@@ -1,3 +1,14 @@
+/*
+----------------------------------------------------------------------------
+Project     : Zambia Smart Bus Tracker
+Module      : routes.js
+Author      : Adam ChapChap Ng'uni
+Date        : 2026-03-20
+Time        : 10:54:11 CAT
+Description : Static route definitions and helper utilities for route matching.
+----------------------------------------------------------------------------
+*/
+
 const LUSAKA_ROUTES = [
 
     {

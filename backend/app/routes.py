@@ -1,3 +1,14 @@
+"""
+----------------------------------------------------------------------------
+Project     : Zambia Smart Bus Tracker
+Module      : routes.py
+Author      : Adam ChapChap Ng'uni
+Date        : 2026-03-20
+Time        : 10:54:11 CAT
+Description : API endpoints for vehicle locations, routes, and fleet statistics.
+----------------------------------------------------------------------------
+"""
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import func

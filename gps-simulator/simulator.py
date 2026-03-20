@@ -1,3 +1,14 @@
+"""
+----------------------------------------------------------------------------
+Project     : Zambia Smart Bus Tracker
+Module      : simulator.py
+Author      : Adam ChapChap Ng'uni
+Date        : 2026-03-20
+Time        : 10:54:11 CAT
+Description : GPS simulator that posts mock vehicle positions to backend endpoints.
+----------------------------------------------------------------------------
+"""
+
 import requests
 import time
 import random

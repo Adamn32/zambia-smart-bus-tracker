@@ -1,3 +1,14 @@
+/*
+----------------------------------------------------------------------------
+Project     : Zambia Smart Bus Tracker
+Module      : StatsPanel.js
+Author      : Adam ChapChap Ng'uni
+Date        : 2026-03-20
+Time        : 10:54:11 CAT
+Description : Displays fleet-level statistics derived from active vehicles.
+----------------------------------------------------------------------------
+*/
+
 import { findClosestRoute } from "./routes"
 
 function StatsPanel({ vehicles, routes }) {

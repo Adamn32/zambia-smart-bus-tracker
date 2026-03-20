@@ -1,3 +1,12 @@
+# ----------------------------------------------------------------------------
+# Project     : Zambia Smart Bus Tracker
+# Module      : docker-compose.yml
+# Author      : Adam ChapChap Ng'uni
+# Date        : 2026-03-20
+# Time        : 10:54:11 CAT
+# Description : Service orchestration for database, API, frontend, and simulator containers.
+# ----------------------------------------------------------------------------
+
 services:
 
   postgres:

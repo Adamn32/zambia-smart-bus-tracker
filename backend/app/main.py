@@ -1,3 +1,14 @@
+"""
+----------------------------------------------------------------------------
+Project     : Zambia Smart Bus Tracker
+Module      : main.py
+Author      : Adam ChapChap Ng'uni
+Date        : 2026-03-20
+Time        : 10:54:11 CAT
+Description : FastAPI application setup, startup checks, and router registration.
+----------------------------------------------------------------------------
+"""
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import time

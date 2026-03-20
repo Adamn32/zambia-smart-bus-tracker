@@ -1,3 +1,14 @@
+/*
+----------------------------------------------------------------------------
+Project     : Zambia Smart Bus Tracker
+Module      : MapView.js
+Author      : Adam ChapChap Ng'uni
+Date        : 2026-03-20
+Time        : 10:54:11 CAT
+Description : Main map container coordinating data fetches and UI overlays.
+----------------------------------------------------------------------------
+*/
+
 import { MapContainer, TileLayer } from "react-leaflet"
 import { useEffect, useState } from "react"
 import axios from "axios"

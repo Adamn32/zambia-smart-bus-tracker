@@ -1,3 +1,14 @@
+/*
+----------------------------------------------------------------------------
+Project     : Zambia Smart Bus Tracker
+Module      : RouteSelector.js
+Author      : Adam ChapChap Ng'uni
+Date        : 2026-03-20
+Time        : 10:54:11 CAT
+Description : Route filter control for selecting visible transit lines.
+----------------------------------------------------------------------------
+*/
+
 function RouteSelector({ routes, selected, onChange }) {
 
     return (
