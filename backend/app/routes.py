@@ -18,13 +18,42 @@ Notes:
 ----------------------------------------------------------------------------
 """
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query, WebSocket, WebSocketDisconnect
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+
 from .database import SessionLocal
-from .models import GPSLocation
+from .services import tracking_service
 
 router = APIRouter()
+
+
+class ConnectionManager:
+
+    def __init__(self):
+        self.active_connections = []
+
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
+
+    def disconnect(self, websocket: WebSocket):
+        if websocket in self.active_connections:
+            self.active_connections.remove(websocket)
+
+    async def broadcast(self, message: dict):
+        disconnected = []
+
+        for connection in list(self.active_connections):
+            try:
+                await connection.send_json(message)
+            except Exception:
+                disconnected.append(connection)
+
+        for connection in disconnected:
+            self.disconnect(connection)
+
+
+manager = ConnectionManager()
 
 
 def get_db():
@@ -35,54 +64,52 @@ def get_db():
         db.close()
 
 
+@router.websocket("/ws/locations")
+async def vehicle_updates_socket(websocket: WebSocket):
+
+    await manager.connect(websocket)
+
+    try:
+        # Keep the socket alive while client remains connected.
+        while True:
+            await websocket.receive_text()
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
+    except Exception:
+        manager.disconnect(websocket)
+
+
 @router.post("/location/update")
-def update_location(data: dict, db: Session = Depends(get_db)):
+async def update_location(data: dict, db: Session = Depends(get_db)):
 
-    gps = GPSLocation(
-        vehicle_id=data["vehicle_id"],
-        latitude=data["lat"],
-        longitude=data["lon"],
-        speed=data["speed"]
-    )
+    vehicle_payload = tracking_service.create_location_update(db, data)
 
-    db.add(gps)
-    db.commit()
+    await manager.broadcast({
+        "type": "vehicle_update",
+        "vehicle": vehicle_payload,
+    })
 
     return {"status": "ok"}
 
 
 @router.get("/vehicles/live")
 def vehicles_live(db: Session = Depends(get_db)):
+    return tracking_service.get_latest_vehicle_positions(db)
 
-    # Get latest location per vehicle
-    subquery = (
-        db.query(
-            GPSLocation.vehicle_id,
-            func.max(GPSLocation.timestamp).label("max_time")
-        )
-        .group_by(GPSLocation.vehicle_id)
-        .subquery()
-    )
 
-    results = (
-        db.query(GPSLocation)
-        .join(
-            subquery,
-            (GPSLocation.vehicle_id == subquery.c.vehicle_id)
-            & (GPSLocation.timestamp == subquery.c.max_time)
-        )
-        .all()
-    )
+@router.get("/vehicles/inactive")
+def vehicles_inactive(
+    threshold_seconds: int = Query(default=120, ge=1),
+    db: Session = Depends(get_db),
+):
+    vehicles = tracking_service.get_latest_vehicle_positions(db)
+    return tracking_service.detect_inactive_vehicles(vehicles, threshold_seconds)
 
-    vehicles = []
 
-    for r in results:
-        vehicles.append({
-            "vehicle_id": r.vehicle_id,
-            "latitude": r.latitude,
-            "longitude": r.longitude,
-            "speed": r.speed,
-            "timestamp": r.timestamp
-        })
-
-    return vehicles
+@router.get("/vehicles/route-aggregation")
+def route_aggregation(
+    tolerance: float = Query(default=0.005, gt=0),
+    db: Session = Depends(get_db),
+):
+    vehicles = tracking_service.get_latest_vehicle_positions(db)
+    return tracking_service.aggregate_route_utilization(db, vehicles, tolerance)

@@ -22,15 +22,26 @@ import { findClosestRoute } from "./routes"
 
 function VehiclePanel({ vehicles }) {
 
+    const sortedVehicles = [...vehicles].sort((a, b) => {
+        const aMatch = String(a.vehicle_id || "").match(/(\d+)$/)
+        const bMatch = String(b.vehicle_id || "").match(/(\d+)$/)
+
+        if (aMatch && bMatch) {
+            return Number(aMatch[1]) - Number(bMatch[1])
+        }
+
+        return String(a.vehicle_id || "").localeCompare(String(b.vehicle_id || ""))
+    })
+
     return (
 
         <div className="vehicle-panel">
 
             <h3>Fleet Vehicles</h3>
 
-            {vehicles.length === 0 && <p>No active vehicles</p>}
+            {sortedVehicles.length === 0 && <p>No active vehicles</p>}
 
-            {vehicles.map(v => {
+            {sortedVehicles.map(v => {
                 const route = v.matchedRoute || findClosestRoute([v.latitude, v.longitude])
 
                 return (

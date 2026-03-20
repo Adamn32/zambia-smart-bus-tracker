@@ -35,8 +35,35 @@ function MapView() {
     const [selectedRoute, setSelectedRoute] = useState("ALL")
 
     const API = "http://localhost:8000"
+    const WS_API = API.startsWith("https")
+        ? API.replace("https", "wss")
+        : API.replace("http", "ws")
 
     useEffect(() => {
+
+        let websocket = null
+        let reconnectTimer = null
+        let isUnmounted = false
+
+        const upsertVehicle = (vehicle) => {
+            setVehicles((currentVehicles) => {
+                const index = currentVehicles.findIndex(
+                    (v) => v.vehicle_id === vehicle.vehicle_id
+                )
+
+                if (index === -1) {
+                    return [...currentVehicles, vehicle]
+                }
+
+                const nextVehicles = [...currentVehicles]
+                nextVehicles[index] = {
+                    ...nextVehicles[index],
+                    ...vehicle,
+                }
+
+                return nextVehicles
+            })
+        }
 
         const fetchVehicles = async () => {
             try {
@@ -47,13 +74,58 @@ function MapView() {
             }
         }
 
+        const connectSocket = () => {
+            websocket = new WebSocket(WS_API + "/ws/locations")
+
+            websocket.onmessage = (event) => {
+                try {
+                    const payload = JSON.parse(event.data)
+
+                    if (
+                        payload &&
+                        payload.type === "vehicle_update" &&
+                        payload.vehicle &&
+                        payload.vehicle.vehicle_id
+                    ) {
+                        upsertVehicle(payload.vehicle)
+                    }
+                } catch (error) {
+                    console.error("Invalid WebSocket payload", error)
+                }
+            }
+
+            websocket.onclose = () => {
+                if (!isUnmounted) {
+                    reconnectTimer = setTimeout(connectSocket, 3000)
+                }
+            }
+
+            websocket.onerror = (error) => {
+                console.error("WebSocket error", error)
+            }
+        }
+
         fetchVehicles()
 
-        const interval = setInterval(fetchVehicles, 5000)
+        // Keep REST as fallback consistency check while streaming is primary.
+        const interval = setInterval(fetchVehicles, 15000)
 
-        return () => clearInterval(interval)
+        connectSocket()
 
-    }, [])
+        return () => {
+            isUnmounted = true
+            clearInterval(interval)
+
+            if (reconnectTimer) {
+                clearTimeout(reconnectTimer)
+            }
+
+            if (websocket && websocket.readyState <= 1) {
+                websocket.close()
+            }
+        }
+
+    }, [API, WS_API])
 
     const vehiclesWithRoute = useMemo(() => {
         return vehicles.map((v) => {
@@ -100,10 +172,11 @@ function MapView() {
                 selected={selectedRoute}
                 onChange={setSelectedRoute}
             />
+            <div className="left-panels">
+                <VehiclePanel vehicles={filteredVehicles} />
 
-            <VehiclePanel vehicles={filteredVehicles} />
-
-            <StatsPanel vehicles={vehiclesWithRoute} routes={LUSAKA_ROUTES} />
+                <StatsPanel vehicles={vehiclesWithRoute} routes={LUSAKA_ROUTES} />
+            </div>
 
         </div>
     )

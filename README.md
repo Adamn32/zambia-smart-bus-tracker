@@ -1,6 +1,6 @@
 # Zambia Smart Bus Tracker
 
-Containerized GPS fleet tracking **simulation** for public transport minibuses in Lusaka.
+Containerized real-time GPS fleet tracking **simulation** for public transport minibuses in Lusaka.
 
 ## Simulation Notice
 
@@ -15,9 +15,10 @@ Core flow:
 `Simulator -> API -> DB -> Frontend`
 
 - `Simulator` (`gps-simulator`) generates mock GPS positions every 5 seconds
-- `API` (FastAPI) ingests and serves latest vehicle telemetry
+- `API` (FastAPI) ingests telemetry, serves APIs, and streams updates via WebSockets
 - `DB` (PostgreSQL + PostGIS) persists location records
 - `Frontend` (React + Leaflet) visualizes live vehicles, route matching, and fleet stats
+- `Service Layer` (`backend/app/services/tracking_service.py`) isolates business logic for tracking and aggregation
 
 Why this matters for evaluators:
 
@@ -153,6 +154,9 @@ Implemented endpoints:
 
 - `POST /location/update`
 - `GET /vehicles/live`
+- `GET /vehicles/inactive`
+- `GET /vehicles/route-aggregation`
+- `WS /ws/locations` (streaming vehicle updates)
 
 ## Verification Checklist
 

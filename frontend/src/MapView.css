@@ -58,11 +58,19 @@ Notes:
    Vehicle List Panel (left)
 ================================ */
 
-.vehicle-panel {
+.left-panels {
     position: absolute;
     top: 80px;
     left: 15px;
     width: 240px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 1000;
+}
+
+.vehicle-panel {
+    width: 100%;
     max-height: 420px;
     overflow-y: auto;
     background: white;
@@ -93,10 +101,7 @@ Notes:
 ================================ */
 
 .stats-panel {
-    position: absolute;
-    top: 80px;
-    right: 20px;
-    width: 240px;
+    width: 100%;
     background: white;
     padding: 12px;
     border-radius: 10px;
@@ -236,11 +241,7 @@ Notes:
 
 @media (max-width: 900px) {
 
-    .vehicle-panel {
-        width: 180px;
-    }
-
-    .stats-panel {
+    .left-panels {
         width: 180px;
     }
 
